@@ -26,9 +26,21 @@ short table_block_get_total_items(Table *table, off_t block_addr) {
 }
 
 void table_read(Table *table, RID rid, ItemPtr dest) {
+    off_t block_addr = get_rid_block_addr(rid);
+    short idx = get_rid_idx(rid);
+
+    Block* block = (Block*)get_page(&(table->data_pool), block_addr);
+
+    ItemID itemid = get_item_id(block, idx);
+    short item_size = get_item_id_size(itemid);
+    memcpy(dest, get_item(block, idx), item_size);
+
+    release(&(table->data_pool), block_addr);
+    return;
 }
 
 RID table_insert(Table *table, ItemPtr src, short size) {
+    
 }
 
 void table_delete(Table *table, RID rid) {

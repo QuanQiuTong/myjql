@@ -3,12 +3,25 @@
 #include "table.h"
 
 void read_string(Table *table, RID rid, StringRecord *record) {
+    table_read(table, rid, (ItemPtr) & (record->chunk));
+    record->idx = 0;
 }
 
 int has_next_char(StringRecord *record) {
+    if (get_str_chunk_size(&(record->chunk)) != record->idx)
+        return 1;
+    return get_rid_idx(get_str_chunk_rid(&(record->chunk))) != -1;
 }
 
 char next_char(Table *table, StringRecord *record) {
+    if (get_str_chunk_size(&(record->chunk)) != record->idx)
+        return get_str_chunk_data_ptr(&(record->chunk))[record->idx++];
+    RID rid = get_str_chunk_rid(&(record->chunk));
+    if (get_rid_idx(rid) == -1)
+        return 0;
+    table_read(table, rid, (ItemPtr) & (record->chunk));
+    record->idx = 0;
+    return get_str_chunk_data_ptr(&(record->chunk))[record->idx++];
 }
 
 int compare_string_record(Table *table, const StringRecord *a, const StringRecord *b) {
