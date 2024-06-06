@@ -27,8 +27,6 @@ static void initialize_hash_map_block(BufferPool *pool, off_t offset) {
     release(pool, offset);
 }
 
-// Implement the following functions
-
 void hash_table_init(const char *filename, BufferPool *pool, off_t n_directory_blocks) {
     init_buffer_pool(filename, pool);
 
