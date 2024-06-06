@@ -11,6 +11,7 @@ typedef struct {
     off_t free_block_head;
     off_t n_directory_blocks;
     off_t max_size;
+    off_t n_block;
 } HashMapControlBlock;
 
 #define HASH_MAP_DIR_BLOCK_SIZE (PAGE_SIZE / sizeof(off_t))

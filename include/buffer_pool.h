@@ -3,6 +3,8 @@
 
 #include "file_io.h"
 
+#include <stdbool.h>
+
 #define CACHE_PAGE 8
 
 typedef struct {
@@ -12,6 +14,7 @@ typedef struct {
   off_t addrs[CACHE_PAGE];
   size_t cnt[CACHE_PAGE];
   size_t ref[CACHE_PAGE];
+  bool avail[CACHE_PAGE];
 } BufferPool;
 
 /* BEGIN: --------------------------------- DO NOT MODIFY! --------------------------------- */
