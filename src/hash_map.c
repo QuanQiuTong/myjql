@@ -145,7 +145,7 @@ off_t hash_table_pop_lower_bound(BufferPool *pool, short size) {
 
         if (target_dir->directory[block_id]) {
             off_t block_addr = target_dir->directory[block_id];
-            HashMapBlock *block = get_page(pool, block_addr);
+            HashMapBlock *block = get_block(pool, block_addr);
             release(pool, block_addr);
 
             while (block_addr) {
@@ -193,10 +193,7 @@ void hash_table_pop(BufferPool *pool, short size, off_t addr) {
 
         block->next = ctrl->free_block_head;
         ctrl->free_block_head = block_addr;
-        release(pool, block_addr);
-        release(pool, (size / HASH_MAP_DIR_BLOCK_SIZE + 1) * PAGE_SIZE);
-        release(pool, 0);
-        return;
+        goto ret;
     }
 
     for (off_t next_addr, last_addr; block_addr; last_addr = block_addr, block_addr = next_addr) {
@@ -216,14 +213,12 @@ void hash_table_pop(BufferPool *pool, short size, off_t addr) {
                     ctrl->free_block_head = block_addr;
                     release(pool, last_addr);
                 }
-                release(pool, block_addr);
-                release(pool, (size / HASH_MAP_DIR_BLOCK_SIZE + 1) * PAGE_SIZE);
-                release(pool, 0);
-                return;
+                goto ret;
             }
         }
         release(pool, block_addr);
     }
+    ret:
     release(pool, block_addr);
     release(pool, (size / HASH_MAP_DIR_BLOCK_SIZE + 1) * PAGE_SIZE);
     release(pool, 0);

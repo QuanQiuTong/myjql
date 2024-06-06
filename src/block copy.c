@@ -31,12 +31,8 @@ short new_item(Block* block, ItemPtr item, short item_size) {
         ItemID item_id = get_item_id(block, idx);
         if (get_item_id_availability(item_id) && get_item_id_size(item_id) >= item_size) {
             block->tail_ptr -= item_size;
-            short offset = get_item_id_offset(item_id);
-            for (int i = 0; i < item_size; i++) {
-                block->data[offset - 3 * sizeof(short) + i] = item[i];
-            }
             get_item_id(block, idx) = compose_item_id(0, block->tail_ptr, item_size);
-            //memcpy(block->data + block->tail_ptr - 3 * sizeof(short), item, item_size);
+            memcpy(block->data + block->tail_ptr - 3 * sizeof(short), item, item_size);
             return idx;
         }
     }
@@ -48,12 +44,7 @@ short new_item(Block* block, ItemPtr item, short item_size) {
     block->tail_ptr -= item_size;
     get_item_id(block, idx) = compose_item_id(0, block->tail_ptr, item_size);
     block->head_ptr += sizeof(ItemID);
-    //memcpy(block->data + block->tail_ptr - 3 * sizeof(short), item, item_size);
-    short offset = get_item_id_offset(item_id);
-    /*memcpy((char*)block + offset, item, item_size);*/
-    for (int i = 0; i < item_size; i++) {
-        block->data[offset - 3 * sizeof(short) + i] = item[i];
-    }
+    memcpy(block->data + block->tail_ptr - 3 * sizeof(short), item, item_size);
     return idx;
 }
 
