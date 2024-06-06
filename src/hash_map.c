@@ -216,7 +216,7 @@ void hash_table_pop(BufferPool *pool, short size, off_t addr) {
         }
         release(pool, block_addr);
     }
-    ret:
+ret:
     release(pool, block_addr);
     release(pool, (size / HASH_MAP_DIR_BLOCK_SIZE + 1) * PAGE_SIZE);
     release(pool, 0);
