@@ -55,31 +55,30 @@ int compare_string_record(Table* table, const StringRecord* a, const StringRecor
 static const RID nil = {-1, -1, -1, -1, -1, -1, -1, -1, 0, 0};
 static ItemPtr chunk(RID rid, short size, const char *data) {
     static StringChunk c;
-    get_rid_block_addr(get_str_chunk_rid(&c)) = get_rid_block_addr(rid);
-    get_rid_idx(get_str_chunk_rid(&c)) = get_rid_idx(rid);
+    get_str_chunk_rid(&c) = rid;
     get_str_chunk_size(&c) = calc_str_chunk_size(size);
     memcpy(get_str_chunk_data_ptr(&c), data, size);
     return (ItemPtr)&c;
 }
 
 RID write_string(Table* table, const char* data, off_t size) {
-    const short max_str_size = STR_CHUNK_MAX_LEN;
+    const short mx = STR_CHUNK_MAX_LEN;
     //split string
-    off_t cnt = size / max_str_size;
-    short endsize = size % max_str_size;
+    off_t cnt = size / mx;
+    short endsize = size % mx;
     if (size % 20 == 0) {
         endsize = 20;
         cnt = cnt - 1;
     }
 
     RID rid = table_insert(table, 
-                chunk(nil, endsize, data + cnt * max_str_size), calc_str_chunk_size(endsize));
+                chunk(nil, endsize, data + cnt * mx), calc_str_chunk_size(endsize));
     while(cnt-- > 1)
         rid = table_insert(table, 
-                chunk(rid, max_str_size, data + cnt * max_str_size), STR_CHUNK_MAX_SIZE);
-    if (size > max_str_size)
+                chunk(rid, mx, data + cnt * mx), STR_CHUNK_MAX_SIZE);
+    if (size > mx)
         rid = table_insert(table,
-                chunk(rid, max_str_size, data), STR_CHUNK_MAX_SIZE);
+                chunk(rid, mx, data), STR_CHUNK_MAX_SIZE);
     return rid;
 }
 
@@ -105,7 +104,6 @@ void delete_string(Table* table, RID rid) {
         current_rid = next_rid;
         release(&table->data_pool, addr);
     }
-    return;
 }
 
 size_t load_string(Table* table, const StringRecord* record, char* dest, size_t max_size) {

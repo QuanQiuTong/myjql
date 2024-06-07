@@ -22,6 +22,7 @@ typedef struct {
   /* you can modify anything in this struct */
   off_t root_node;
   off_t free_node_head;
+  size_t n_node;
 } BCtrlBlock;
 
 /* BEGIN: --------------------------------- DO NOT MODIFY! --------------------------------- */
