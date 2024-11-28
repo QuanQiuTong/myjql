@@ -32,7 +32,7 @@ void hash_table_init(const char *filename, BufferPool *pool, off_t n_directory_b
 
     if (pool->file.length) return;
 
-    init_empty_blocks(pool, n_directory_blocks + 2);
+    init_empty_blocks(pool, (int)n_directory_blocks + 2);
 
     HashMapControlBlock *ctrl = (HashMapControlBlock *)get_page(pool, 0);
     ctrl->free_block_head = (n_directory_blocks + 1) * PAGE_SIZE;

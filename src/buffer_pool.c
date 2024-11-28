@@ -21,7 +21,6 @@ void init_buffer_pool(const char *filename, BufferPool *pool)
     {
         pool->addrs[i] = -1;
         pool->cnt[i] = 0;
-        pool->ref[i] = 0;
         pool->avail[i] = true;
         read_page(&pool->pages[i], &pool->file, PAGE_SIZE * i);
     }
@@ -41,7 +40,6 @@ Page *get_page(BufferPool *pool, off_t addr) // LRU
     {
         if (pool->addrs[i] == addr)
         {
-            pool->ref[i]++;
             pool->cnt[i] = 0;
             pool->avail[i] = false;
             return &pool->pages[i];
@@ -56,7 +54,6 @@ Page *get_page(BufferPool *pool, off_t addr) // LRU
             {
                 read_page(&pool->pages[i], &pool->file, addr);
                 pool->addrs[i] = addr;
-                pool->ref[i]++;
                 pool->cnt[i] = 0;
                 pool->avail[i] = false;
                 return &pool->pages[i];
@@ -74,7 +71,6 @@ Page *get_page(BufferPool *pool, off_t addr) // LRU
     }
     release(pool, pool->addrs[target]);
     pool->addrs[target] = addr;
-    pool->ref[target]++;
     pool->cnt[target] = 0;
     pool->avail[target] = false;
     return &pool->pages[target];
@@ -87,7 +83,6 @@ void release(BufferPool *pool, off_t addr)
         {
             write_page(&pool->pages[i], &pool->file, pool->addrs[i]);
             pool->addrs[i] = -1;
-            pool->ref[i]++;
             pool->avail[i] = true;
             return;
         }

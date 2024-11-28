@@ -5,15 +5,15 @@
 #include "table.h"
 
 /* it MUST be satisfied that: DEGREE >= 2 */
-#define DEGREE (((PAGE_SIZE) - sizeof(size_t) - sizeof(off_t) - sizeof(char) + sizeof(RID)) / 2 / (sizeof(off_t) + sizeof(RID)))
+#define DEGREE (((PAGE_SIZE) - sizeof(size_t) - sizeof(off_t) - sizeof(char) - sizeof(off_t)) / 2 / (sizeof(off_t) + sizeof(RID)))
 
 typedef struct {
   /* B-Tree Node */
   /* you can modify anything in this struct */
   size_t n;
   off_t next;
-  off_t child[2 * DEGREE];
-  RID row_ptr[2 * DEGREE - 1];
+  off_t child[2 * DEGREE + 1];
+  RID row_ptr[2 * DEGREE];
   char leaf;
 } BNode;
 
@@ -22,7 +22,7 @@ typedef struct {
   /* you can modify anything in this struct */
   off_t root_node;
   off_t free_node_head;
-  size_t n_node;
+  off_t max_size;
 } BCtrlBlock;
 
 /* BEGIN: --------------------------------- DO NOT MODIFY! --------------------------------- */
@@ -77,5 +77,8 @@ RID b_tree_insert(BufferPool *pool, RID rid, b_tree_row_row_cmp_t cmp, b_tree_in
 void b_tree_delete(BufferPool *pool, RID rid, b_tree_row_row_cmp_t cmp, b_tree_insert_nonleaf_handler_t insert_handler, b_tree_delete_nonleaf_handler_t delete_handler);
 
 /* END:   --------------------------------- DO NOT MODIFY! --------------------------------- */
+
+//typedef void (*b_tree_print_key_handler_t)(RID rid);
+//void b_tree_display(BufferPool *pool, b_tree_print_key_handler_t print_handler);
 
 #endif  /* _B_TREE_H */

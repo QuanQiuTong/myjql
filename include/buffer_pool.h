@@ -13,7 +13,7 @@ typedef struct {
   Page pages[CACHE_PAGE];
   off_t addrs[CACHE_PAGE];
   size_t cnt[CACHE_PAGE];
-  size_t ref[CACHE_PAGE];
+  // size_t ref[CACHE_PAGE];
   bool avail[CACHE_PAGE];
 } BufferPool;
 

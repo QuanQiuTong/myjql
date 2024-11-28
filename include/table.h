@@ -44,6 +44,8 @@ void print_rid(RID rid);
 
 /* END:   --------------------------------- DO NOT MODIFY! --------------------------------- */
 
+static const RID nil = {-1, -1, -1, -1, -1, -1, -1, -1, 0, 0};
+
 /* void analyze_table(Table *table); */
 
 #endif  /* _TABLE_H */
